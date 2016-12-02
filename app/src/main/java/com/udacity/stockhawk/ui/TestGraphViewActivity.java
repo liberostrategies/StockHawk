@@ -29,24 +29,16 @@ public class TestGraphViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test_graphview);
 
-//        // Basic points.
-//        GraphView graph = (GraphView) findViewById(R.id.graph);
-//        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
-//                new DataPoint(0, 1),
-//                new DataPoint(1, 5),
-//                new DataPoint(2, 3),
-//                new DataPoint(3, 2),
-//                new DataPoint(4, 6)
-//        });
-//        graph.addSeries(series);
-
         // Use Dates as Labels.
         // generate Dates
         Calendar calendar = Calendar.getInstance();
+        // 2016-11-28
+        calendar.set(2016, 10, 14);
         Date d1 = calendar.getTime();
-        calendar.add(Calendar.DATE, 1);
+        calendar.set(2016, 10, 21);
+        calendar.set(Calendar.DATE, 21);
         Date d2 = calendar.getTime();
-        calendar.add(Calendar.DATE, 1);
+        calendar.set(2016, 10, 28);
         Date d3 = calendar.getTime();
 
         GraphView graph = (GraphView) findViewById(R.id.graph);
@@ -54,15 +46,16 @@ public class TestGraphViewActivity extends AppCompatActivity {
 // you can directly pass Date objects to DataPoint-Constructor
 // this will convert the Date to double via Date#getTime()
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(d1, 1),
-                new DataPoint(d2, 5),
-                new DataPoint(d3, 3)
+                new DataPoint(d1, 60.349998),
+                new DataPoint(d2, 60.529999),
+                new DataPoint(d3, 59.200001)
         });
 
         graph.addSeries(series);
 
 // set date label formatter
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(this));
+        DateAsXAxisLabelFormatter dateFormatter = new DateAsXAxisLabelFormatter(this);
+        graph.getGridLabelRenderer().setLabelFormatter(dateFormatter);
         graph.getGridLabelRenderer().setNumHorizontalLabels(3); // only 4 because of the space
 
 // set manual x bounds to have nice steps
