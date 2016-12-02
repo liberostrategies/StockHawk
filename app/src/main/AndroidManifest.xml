@@ -22,6 +22,17 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.TestGraphViewActivity"
+            android:label="Testing GraphView Package"
+            android:parentActivityName=".ui.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.MainActivity" />
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+        </activity>
+
         <service
             android:name=".sync.QuoteIntentService"
             android:exported="false" />
