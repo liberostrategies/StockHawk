@@ -25,8 +25,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import timber.log.Timber;
-
 /**
  * Created by pink on 12/2/2016.
  */
@@ -56,7 +54,7 @@ public class StockGraphActivity extends AppCompatActivity {
         );
 
         int numTickers = cursor.getCount();
-        Timber.d("numTickers [" + numTickers + "]");
+//        Timber.d("numTickers [" + numTickers + "]");
 
         // Populate the dates and quotes arrays.
         ArrayList dates = new ArrayList<Date>();
@@ -66,20 +64,20 @@ public class StockGraphActivity extends AppCompatActivity {
         cursor.moveToFirst();
         do {
             String history = cursor.getString(Contract.Quote.POSITION_HISTORY);
-            Timber.d("History [" + history + "]");
+//            Timber.d("History [" + history + "]");
             int idxPoint = 0;
             do {
                 idxPoint = history.indexOf(NEW_LINE);
                 String point = history.substring(0, idxPoint);
-                Timber.d("point[" + point + "]");
+//                Timber.d("point[" + point + "]");
                 int idxComma = point.indexOf(COMMA);
                 String dateLong = point.substring(0, idxComma);
                 dates.add(new Date(Long.parseLong(dateLong)));
                 String quote = point.substring(2 + idxComma);
                 quotes.add(Double.parseDouble(quote));
-                Timber.d("dateLong <" + dateLong + "> quote <<" + quote + ">>");
+//                Timber.d("dateLong <" + dateLong + "> quote <<" + quote + ">>");
                 history = history.substring(idxPoint + 1);
-                Timber.d("new history [" + history + "]");
+//                Timber.d("new history [" + history + "]");
             } while (history.length() > 0);
         } while( cursor.moveToNext() );
         cursor.close();
