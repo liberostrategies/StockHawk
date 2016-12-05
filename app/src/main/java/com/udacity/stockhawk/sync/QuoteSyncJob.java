@@ -61,13 +61,14 @@ public final class QuoteSyncJob {
             Iterator<String> iterator = stockCopy.iterator();
 
             Timber.d(quotes.toString());
+            Timber.d("End quote.toString()");
 
             ArrayList<ContentValues> quoteCVs = new ArrayList<>();
 
             while (iterator.hasNext()) {
                 String symbol = iterator.next();
 
-
+                Timber.d("Getting quotes for symbol: " + symbol);
                 Stock stock = quotes.get(symbol);
                 StockQuote quote = stock.getQuote();
 
@@ -81,6 +82,7 @@ public final class QuoteSyncJob {
 
                 StringBuilder historyBuilder = new StringBuilder();
 
+                // TO DO: Get the date and closing quote from historyBuilder.
                 for (HistoricalQuote it : history) {
                     historyBuilder.append(it.getDate().getTimeInMillis());
                     historyBuilder.append(", ");
@@ -94,13 +96,14 @@ public final class QuoteSyncJob {
                 quoteCV.put(Contract.Quote.COLUMN_PERCENTAGE_CHANGE, percentChange);
                 quoteCV.put(Contract.Quote.COLUMN_ABSOLUTE_CHANGE, change);
 
-
+                Timber.d("put history builder: " + historyBuilder);
                 quoteCV.put(Contract.Quote.COLUMN_HISTORY, historyBuilder.toString());
 
                 quoteCVs.add(quoteCV);
 
             }
 
+            Timber.d("bulk inserting");
             context.getContentResolver()
                     .bulkInsert(
                             Contract.Quote.uri,
