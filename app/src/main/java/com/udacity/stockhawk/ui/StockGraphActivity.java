@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.TextView;
 
 import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
@@ -30,11 +31,11 @@ import timber.log.Timber;
  * Created by pink on 12/2/2016.
  */
 
-public class TestGraphViewActivity extends AppCompatActivity {
+public class StockGraphActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.test_graphview);
+        setContentView(R.layout.stock_graph);
 
         // Use Dates as Labels.
         GraphView graph = (GraphView) findViewById(R.id.graph);
@@ -42,7 +43,8 @@ public class TestGraphViewActivity extends AppCompatActivity {
         // Query db for historic values and store in arrays.
         int numSymbols = 1;
         String[] symbols = new String[numSymbols];
-        symbols[0] = "AAPL";
+        symbols[0] = getIntent().getStringExtra(MainActivity.SYMBOL_EXTRA);//"AAPL";
+        ((TextView)findViewById(R.id.symbol_text)).setText(symbols[0]);
 
         // A cursor is your primary interface to the query results.
         Cursor cursor = getContentResolver().query(

@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.TestGraphViewActivity"
+        <activity android:name=".ui.StockGraphActivity"
             android:label="Testing GraphView Package"
             android:parentActivityName=".ui.MainActivity">
             <meta-data

@@ -45,12 +45,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     TextView error;
     private StockAdapter adapter;
 
+    public static final String SYMBOL_EXTRA = "symbol";
+
     @Override
     public void onClick(String symbol) {
         Timber.d("Symbol clicked: %s", symbol);
 
         // Test GraphView package graphing abilities.
-        Intent intent = new Intent(this, TestGraphViewActivity.class);
+        Intent intent = new Intent(this, StockGraphActivity.class);
+        intent.putExtra(SYMBOL_EXTRA, symbol);
         startActivity(intent);
     }
 
