@@ -23,7 +23,7 @@
         </activity>
 
         <activity android:name=".ui.StockGraphActivity"
-            android:label="Testing GraphView Package"
+            android:label="Closing Price Values"
             android:parentActivityName=".ui.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
