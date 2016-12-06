@@ -83,7 +83,7 @@ public final class QuoteSyncJob {
 
                     StringBuilder historyBuilder = new StringBuilder();
 
-                    // TO DO: Get the date and closing quote from historyBuilder.
+                    // Get the date and closing quote from historyBuilder.
                     for (HistoricalQuote it : history) {
                         historyBuilder.append(it.getDate().getTimeInMillis());
                         historyBuilder.append(", ");
@@ -97,7 +97,7 @@ public final class QuoteSyncJob {
                     quoteCV.put(Contract.Quote.COLUMN_PERCENTAGE_CHANGE, percentChange);
                     quoteCV.put(Contract.Quote.COLUMN_ABSOLUTE_CHANGE, change);
 
-                    Timber.d("put history builder: " + historyBuilder);
+//                    Timber.d("put history builder: " + historyBuilder);
                     quoteCV.put(Contract.Quote.COLUMN_HISTORY, historyBuilder.toString());
 
                     quoteCVs.add(quoteCV);
