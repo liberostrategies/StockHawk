@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import timber.log.Timber;
+
 
 public class StockProvider extends ContentProvider {
 
@@ -21,8 +23,8 @@ public class StockProvider extends ContentProvider {
 
     static UriMatcher buildUriMatcher() {
         UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
-        matcher.addURI(Contract.AUTHORITY, Contract.PATH_QUOTE, QUOTE);
-        matcher.addURI(Contract.AUTHORITY, Contract.PATH_QUOTE_WITH_SYMBOL, QUOTE_FOR_SYMBOL);
+        matcher.addURI(Contract.AUTHORITY, Contract.PATH_QUOTE, QUOTE); // "/quote"
+        matcher.addURI(Contract.AUTHORITY, Contract.PATH_QUOTE_WITH_SYMBOL, QUOTE_FOR_SYMBOL); // "/quote/*"
         return matcher;
     }
 
@@ -51,7 +53,6 @@ public class StockProvider extends ContentProvider {
                         sortOrder
                 );
                 break;
-
             case QUOTE_FOR_SYMBOL:
                 returnCursor = db.query(
                         Contract.Quote.TABLE_NAME,
@@ -62,7 +63,6 @@ public class StockProvider extends ContentProvider {
                         null,
                         sortOrder
                 );
-
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown URI:" + uri);
@@ -86,6 +86,7 @@ public class StockProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
+        Timber.d("insert()");
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Uri returnUri;
 
@@ -149,7 +150,7 @@ public class StockProvider extends ContentProvider {
 
     @Override
     public int bulkInsert(Uri uri, ContentValues[] values) {
-
+        Timber.d("bulkInsert()");
         final SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         switch (uriMatcher.match(uri)) {

@@ -12,6 +12,8 @@ public class Contract {
 
     public static final String PATH_QUOTE = "quote";
     public static final String PATH_QUOTE_WITH_SYMBOL = "quote/*";
+    public static final String PATH_QUOTE_LAST = "quote/last";
+    public static final String PATH_QUOTE_LAST_WITH_SYMBOL = "quote/last/*";
 
     public static final class Quote implements BaseColumns {
 

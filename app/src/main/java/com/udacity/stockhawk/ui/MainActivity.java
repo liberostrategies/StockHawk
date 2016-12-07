@@ -1,6 +1,7 @@
 package com.udacity.stockhawk.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -44,9 +45,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     TextView error;
     private StockAdapter adapter;
 
+    public static final String SYMBOL_EXTRA = "symbol";
+
     @Override
     public void onClick(String symbol) {
         Timber.d("Symbol clicked: %s", symbol);
+
+        // Test GraphView package graphing abilities.
+        Intent intent = new Intent(this, StockGraphActivity.class);
+        intent.putExtra(SYMBOL_EXTRA, symbol);
+        startActivity(intent);
     }
 
     @Override
