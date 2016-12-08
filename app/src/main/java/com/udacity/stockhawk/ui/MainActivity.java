@@ -154,6 +154,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         if (data.getCount() != 0) {
             error.setVisibility(View.GONE);
+        } else {
+            error.setVisibility(View.VISIBLE);
         }
         adapter.setCursor(data);
     }
