@@ -1,24 +1,30 @@
+/*
+ * Copyright (c) 2016. Libero Strategies, LLC - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and Confidential
+ */
+
 package com.udacity.stockhawk.sync;
 
 import android.app.IntentService;
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.widget.RemoteViews;
 
 import com.udacity.stockhawk.R;
 import com.udacity.stockhawk.data.Contract;
-import com.udacity.stockhawk.ui.MainActivity;
 import com.udacity.stockhawk.widget.StockWidgetProvider;
+import com.udacity.stockhawk.widget.StockWidgetRemoteViewsService;
 
 import timber.log.Timber;
 
-import static com.udacity.stockhawk.R.id.price;
-
 
 public class QuoteIntentService extends IntentService {
+    public static final String ACTION_DATA_UPDATED =
+            "com.udacity.stockhawk.sync.ACTION_DATA_UPDATED";
 
     public QuoteIntentService() {
         super(QuoteIntentService.class.getSimpleName());
@@ -53,33 +59,59 @@ public class QuoteIntentService extends IntentService {
             do {
                 closingPrice1 = cursor.getString(Contract.Quote.POSITION_PRICE);
                 symbol1 = cursor.getString(Contract.Quote.POSITION_SYMBOL);
-                Timber.d(symbol1 + " Price [" + price + "]");
+                Timber.d(symbol1 + " Price [" + closingPrice1 + "]");
             } while (cursor.moveToNext());
         }
-        cursor.close();
 
         // Perform this loop procedure for each widget
+        // update each of the widgets with the remote adapter
         for (int appWidgetId : appWidgetIds) {
-            // Display data in widget.
-            RemoteViews views = new RemoteViews(getPackageName(), R.layout.widget_small);
+            // Here we setup the intent which points to the StackViewService which will
+            // provide the views for this collection.
+            Intent launchWidgetIntent = new Intent(this, StockWidgetRemoteViewsService.class);
+            launchWidgetIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            // When intents are compared, the extras are ignored, so we need to embed the extras
+            // into the data so that the extras will not be ignored.
+            launchWidgetIntent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
+            RemoteViews rv = new RemoteViews(this.getPackageName(), R.layout.widget_collection);
 
-            // Add the data to the RemoteViews
-//        views.setImageViewResource(R.id.widget_icon, weatherArtResourceId);
-            // Content Descriptions for RemoteViews were only added in ICS MR1
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-//            setRemoteContentDescription(views, description);
-//        }
-            views.setTextViewText(R.id.widget_symbol, symbol1);
-            views.setTextViewText(R.id.widget_closing_price, closingPrice1);
+            // Create an Intent to launch main activity.
+//            Intent mainIntent = new Intent(this, StockHawkApp.class);
+//            mainIntent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
+//            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, mainIntent, 0);
+//            rv.setOnClickPendingIntent(R.id.swipe_refresh, pendingIntent);
 
-            // Create an Intent to launch MainActivity
-            Intent launchIntent = new Intent(this, MainActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, launchIntent, 0);
-            views.setOnClickPendingIntent(R.id.widget_small_fragment, pendingIntent);
+            rv.setRemoteAdapter(appWidgetId, R.id.widget_list, launchWidgetIntent);
+            rv.setRemoteAdapter(R.id.widget_list, launchWidgetIntent);
+            // The empty view is displayed when the collection has no items. It should be a sibling
+            // of the collection view.
+            rv.setEmptyView(R.id.widget_list, R.id.widget_empty);
+            // Here we setup the a pending intent template. Individuals items of a collection
+            // cannot setup their own pending intents, instead, the collection as a whole can
+            // setup a pending intent template, and the individual items can set a fillInIntent
+            // to create unique before on an item to item basis.
+/*            Intent toastIntent = new Intent(getApplicationContext(), StockWidgetProvider.class);
+//            toastIntent.setAction(StockWidgetProvider.TOAST_ACTION);
+            toastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
+            PendingIntent toastPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, toastIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+*/
+//            PendingIntent clickPendingIntent = PendingIntent.getBroadcast(this, 0, launchWidgetIntent,
+//                    PendingIntent.FLAG_UPDATE_CURRENT);
+//            rv.setPendingIntentTemplate(R.id.widget_list, clickPendingIntent);
+            appWidgetManager.updateAppWidget(appWidgetId, rv);
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list);
 
-            // Tell the AppWidgetManager to perform an update on the current app widget
-            appWidgetManager.updateAppWidget(appWidgetId, views);
-
+            cursor.close();
         }
+        updateWidgets();
+    }
+
+    private void updateWidgets() {
+        // Setting the package ensures that only components in our app will receive the broadcast
+        Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED)
+                .setPackage(getPackageName());
+        sendBroadcast(dataUpdatedIntent);
     }
 }

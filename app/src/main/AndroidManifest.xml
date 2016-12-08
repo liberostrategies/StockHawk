@@ -17,7 +17,6 @@
         <activity android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -49,6 +48,7 @@
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <!-- Widgets -->
+        <!--<service android:name=".sync.QuoteIntentService" />-->
         <receiver
             android:name=".widget.StockWidgetProvider">
             <intent-filter>
@@ -57,8 +57,12 @@
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_small_info"/>
+                android:resource="@xml/widget_collection"/>
         </receiver>
+        <service
+            android:name=".widget.StockWidgetRemoteViewsService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
 
     </application>
 
