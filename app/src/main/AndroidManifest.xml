@@ -57,7 +57,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_collection"/>
+                android:resource="@xml/widget_collection_info"/>
         </receiver>
         <service
             android:name=".widget.StockWidgetRemoteViewsService"

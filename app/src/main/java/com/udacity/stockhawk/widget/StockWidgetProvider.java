@@ -6,6 +6,7 @@
 
 package com.udacity.stockhawk.widget;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
@@ -16,9 +17,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.RemoteViews;
 
+import com.udacity.stockhawk.BuildConfig;
 import com.udacity.stockhawk.R;
 import com.udacity.stockhawk.data.Contract;
 import com.udacity.stockhawk.sync.QuoteIntentService;
+import com.udacity.stockhawk.ui.MainActivity;
 
 import timber.log.Timber;
 
@@ -27,35 +30,18 @@ import timber.log.Timber;
  */
 
 public class StockWidgetProvider extends AppWidgetProvider {
+    Context mContext;
+
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+        mContext = context;
         Timber.d("onUpdate(), appWidgetIds.length=" + appWidgetIds.length);
-//        context.startService(new Intent(context, QuoteIntentService.class));
         // update each of the widgets with the remote adapter
         for (int i = 0; i < appWidgetIds.length; ++i) {
             Timber.d("appWidgetid=" + i);
 
-            // Get the stored stock data.
-            Cursor cursor = context.getContentResolver().query(
-                    Contract.Quote.uri,
-                    null, // leaving "columns" null just returns all the columns.
-                    null, //Contract.Quote.COLUMN_SYMBOL, // cols for "where" clause
-                    null, //new String[] {symbols[0]}, // values for "where" clause
-                    null  // sort order == by DATE ASCENDING
-            );
-
-            int numTickers = cursor.getCount();
-            Timber.d("numTickers [" + numTickers + "]");
-
-            // Parse data fields.
-            String symbol1 = "";
-            String closingPrice1 = "";
-            if (cursor.moveToFirst()) {
-                do {
-                    closingPrice1 = cursor.getString(Contract.Quote.POSITION_PRICE);
-                    symbol1 = cursor.getString(Contract.Quote.POSITION_SYMBOL);
-                    Timber.d(symbol1 + " Price [" + closingPrice1 + "]");
-                } while (cursor.moveToNext());
+            if (BuildConfig.DEBUG) {
+                debugStockData();
             }
 
             // Perform this loop procedure for each widget
@@ -69,39 +55,21 @@ public class StockWidgetProvider extends AppWidgetProvider {
                 // into the data so that the extras will not be ignored.
                 launchWidgetIntent.setData(Uri.parse(launchWidgetIntent.toUri(Intent.URI_INTENT_SCHEME)));
                 RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.widget_collection);
-
-                // Create an Intent to launch main activity.
-//            Intent mainIntent = new Intent(this, StockHawkApp.class);
-//            mainIntent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
-//            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, mainIntent, 0);
-//            rv.setOnClickPendingIntent(R.id.swipe_refresh, pendingIntent);
-
                 rv.setRemoteAdapter(appWidgetId, R.id.widget_list, launchWidgetIntent);
                 rv.setRemoteAdapter(R.id.widget_list, launchWidgetIntent);
                 // The empty view is displayed when the collection has no items. It should be a sibling
                 // of the collection view.
                 rv.setEmptyView(R.id.widget_list, R.id.widget_empty);
-                // Here we setup the a pending intent template. Individuals items of a collection
-                // cannot setup their own pending intents, instead, the collection as a whole can
-                // setup a pending intent template, and the individual items can set a fillInIntent
-                // to create unique before on an item to item basis.
-/*            Intent toastIntent = new Intent(getApplicationContext(), StockWidgetProvider.class);
-//            toastIntent.setAction(StockWidgetProvider.TOAST_ACTION);
-            toastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-            intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
-            PendingIntent toastPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, toastIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-*/
-//            PendingIntent clickPendingIntent = PendingIntent.getBroadcast(this, 0, launchWidgetIntent,
-//                    PendingIntent.FLAG_UPDATE_CURRENT);
-//            rv.setPendingIntentTemplate(R.id.widget_list, clickPendingIntent);
+
+                // Create an Intent to launch main activity.
+                Intent mainIntent = new Intent(context, MainActivity.class);
+                PendingIntent pendingMainIntent = PendingIntent.getActivity(context, 0, mainIntent, 0);
+                rv.setOnClickPendingIntent(R.id.widget_layout, pendingMainIntent);
+
                 appWidgetManager.updateAppWidget(appWidgetId, rv);
                 appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list);
-
-                cursor.close();
             }
         }
-
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
 
@@ -120,5 +88,31 @@ public class StockWidgetProvider extends AppWidgetProvider {
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list);
         }
         super.onReceive(context, intent);
+    }
+
+    private void debugStockData() {
+            // Get the stored stock data. - for debugging.
+            Cursor cursor = mContext.getContentResolver().query(
+                    Contract.Quote.uri,
+                    null, // leaving "columns" null just returns all the columns.
+                    null, //Contract.Quote.COLUMN_SYMBOL, // cols for "where" clause
+                    null, //new String[] {symbols[0]}, // values for "where" clause
+                    null  // sort order == by DATE ASCENDING
+            );
+
+            int numTickers = cursor.getCount();
+            Timber.d("numTickers [" + numTickers + "]");
+
+            // Parse data fields - for debugging.
+            String symbol1 = "";
+            String closingPrice1 = "";
+            if (cursor.moveToFirst()) {
+                do {
+                    closingPrice1 = cursor.getString(Contract.Quote.POSITION_PRICE);
+                    symbol1 = cursor.getString(Contract.Quote.POSITION_SYMBOL);
+                    Timber.d(symbol1 + " Price [" + closingPrice1 + "]");
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
     }
 }
