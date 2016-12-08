@@ -19,7 +19,8 @@
             android:id="@+id/widget_symbol"
             style="@style/StockSymbolTextStyle"
             android:layout_weight="2"
-            android:paddingStart="@dimen/widget_margin" />
+            android:paddingStart="@dimen/widget_margin"
+            android:paddingEnd="@dimen/widget_margin"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -28,6 +29,7 @@
             style="@style/BidPriceTextStyle"
             android:layout_weight="1"
             android:gravity="right"
+            android:paddingStart="@dimen/widget_margin"
             android:paddingEnd="@dimen/widget_margin" />
     </LinearLayout>
 </FrameLayout>
