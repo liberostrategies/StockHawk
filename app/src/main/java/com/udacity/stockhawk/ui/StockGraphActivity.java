@@ -44,7 +44,7 @@ public class StockGraphActivity extends AppCompatActivity {
         int numSymbols = 1;
         String[] symbols = new String[numSymbols];
         symbols[0] = getIntent().getStringExtra(MainActivity.SYMBOL_EXTRA);//"AAPL";
-        ((TextView)findViewById(R.id.widget_symbol)).setText(symbols[0]);
+        ((TextView)findViewById(R.id.symbol_text)).setText(symbols[0]);
 
         // A cursor is your primary interface to the query results.
         Cursor cursor = getContentResolver().query(

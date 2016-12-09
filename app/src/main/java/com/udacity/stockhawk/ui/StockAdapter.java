@@ -66,10 +66,13 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHol
 
         cursor.moveToPosition(position);
 
+        String symbolValue = cursor.getString(Contract.Quote.POSITION_SYMBOL);
+        holder.symbol.setText(symbolValue);
+        holder.symbol.setContentDescription(symbolValue + " closing price history");
+        String priceValue = dollarFormat.format(cursor.getFloat(Contract.Quote.POSITION_PRICE));
+        holder.price.setText(priceValue);
 
-        holder.symbol.setText(cursor.getString(Contract.Quote.POSITION_SYMBOL));
-        holder.price.setText(dollarFormat.format(cursor.getFloat(Contract.Quote.POSITION_PRICE)));
-
+        holder.symbol.setContentDescription(symbolValue);
 
         float rawAbsoluteChange = cursor.getFloat(Contract.Quote.POSITION_ABSOLUTE_CHANGE);
         float percentageChange = cursor.getFloat(Contract.Quote.POSITION_PERCENTAGE_CHANGE);
