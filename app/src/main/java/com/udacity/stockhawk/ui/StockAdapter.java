@@ -20,11 +20,11 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
+public class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
 
     final private Context context;
     final private DecimalFormat dollarFormatWithPlus;
-    final private DecimalFormat dollarFormat;
+    public static DecimalFormat dollarFormat = null;
     final private DecimalFormat percentageFormat;
     private Cursor cursor;
     private StockAdapterOnClickHandler clickHandler;
