@@ -83,8 +83,9 @@ public class StockWidgetRemoteViewsService extends RemoteViewsService {
 
                 RemoteViews views = new RemoteViews(getPackageName(), R.layout.widget_list_item);
                 views.setTextViewText(R.id.widget_symbol, symbol);
-                views.setTextViewText(R.id.widget_closing_price, price);
+                price = com.udacity.stockhawk.ui.StockAdapter.dollarFormat.format(Double.parseDouble(price));
                 Timber.d("getViewAt, i=" + i + ", " + symbol + ", " + price);
+                views.setTextViewText(R.id.widget_closing_price, price);
 
                 final Intent fillInIntent = new Intent();
                 fillInIntent.setData(Contract.Quote.uri);
